@@ -19,3 +19,11 @@ func test_item_and_piece_roots_named_model() -> void:
 		var n := load("res://core/placeholders/%s.tscn" % p).instantiate() as Node
 		assert_eq(n.name, &"Model")
 		n.free()
+
+func test_attachment_sides() -> void:
+	# Characters face -Z, so the character's right is +X.
+	var m := load("res://core/placeholders/capsule_character.tscn").instantiate() as Node3D
+	add_child_autofree(m)
+	assert_gt((m.find_child("hand_r") as Node3D).position.x, 0.0, "hand_r on +X")
+	assert_gt((m.find_child("shoulder_r") as Node3D).position.x, 0.0, "shoulder_r on +X")
+	assert_lt((m.find_child("hand_l") as Node3D).position.x, 0.0, "hand_l on -X")

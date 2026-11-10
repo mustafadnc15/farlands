@@ -109,13 +109,13 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 1
 mesh = SubResource("CylinderMesh_2p4kw")
 
 [node name="hand_r" type="Node3D" parent="." unique_id=1527355213]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.9, 0)
-
-[node name="hand_l" type="Node3D" parent="." unique_id=52182922]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.9, 0)
 
+[node name="hand_l" type="Node3D" parent="." unique_id=52182922]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.9, 0)
+
 [node name="shoulder_r" type="Node3D" parent="." unique_id=742357211]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.4, 0)
 
 [node name="back" type="Node3D" parent="." unique_id=293288104]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0.35)
