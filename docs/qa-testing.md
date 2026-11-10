@@ -14,19 +14,16 @@
 
 ## Harness
 
-- Test framework: **GUT** (Godot Unit Test) under `res://addons/gut/` — installed by `lead` in M0. Verify the release that supports Godot 4.7 before installing.
+- Test framework: **GUT v9.7.1**, vendored under `res://addons/gut/` (installed by `lead` in M0; do not upgrade without a change request).
 - Tests live in `res://tests/<system>/test_*.gd`.
-- Headless run (set `GODOT` to the editor executable path):
-
-```bash
-"$GODOT" --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
-```
-
-- Import/parse check, run before every hand-off: `"$GODOT" --headless --path . --import` then `"$GODOT" --headless --path . --quit` — must print no errors.
+- Run the whole suite with `tools/run_tests.sh`. It needs the `GODOT` environment variable set to the Godot 4.7 **console** executable (for example `export GODOT=<path to Godot_v4.7.2-stable_win64_console.exe>`), re-imports the project, then runs GUT headless with `-gexit`. Extra GUT arguments are passed through, e.g. a single script: `tools/run_tests.sh -gtest=res://tests/core/test_inventory.gd`.
+- Pass means exit code 0 **and** the summary shows the expected script and test counts with every test passing. GUT exits 0 even when a test script fails to parse (the script is silently skipped), so also check the "Scripts" count in the run summary and that the output has no parse errors or warnings. Expected-error lines marked `[ExpectedError]` come from tests that assert on `push_error`/`push_warning` and are fine.
+- Import/boot check, run before every hand-off: `"$GODOT" --headless --path . --import`, then `timeout 90 "$GODOT" --headless --path . --quit-after 2`. Prefer `--quit-after <frames>` over plain `--quit`, which has been seen to hang. It must print no errors or warnings.
+- Session smoke run (starts the game scene without clicking the menu): `timeout 120 "$GODOT" --headless --path . --quit-after 120 -- --autostart` must exit 0 with no errors.
 
 ## Two-client recipe
 
-The game accepts debug arguments (implemented by `net` in M1):
+Debug arguments. `--autostart` (skip the menu and start a session) is implemented. `--host`, `--join`, `--world`, `--port`, `--name` and `--script-driver` are **planned**: the `net` agent implements them in M1.
 
 ```bash
 "$GODOT" --path . -- --host --world=test --port=24565 &

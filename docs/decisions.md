@@ -24,6 +24,9 @@ Append-only log. Newest at the bottom. Only `lead` edits; anyone may propose thr
 | D16 | 2026-11-10 | Modular build pieces and characters are modelled by hand/script or from kits, not image-to-3D | They need exact dimensions / clean rigs that image-to-3D does not give |
 | D17 | 2026-11-10 | Direct IP / LAN only (ENet). No Steam, no relay for now | Chosen by the human. Transport stays behind `Net` so a relay can be added later |
 | D18 | 2026-11-10 | No assets are supplied by the human. Agents may source freely licensed assets (CC0 preferred: KayKit, Quaternius, Kenney) or generate them (Higgsfield), for placeholders and for final art | Chosen by the human. Every sourced file must have its source and licence in `assets/CREDITS.md`; no asset with unclear or non-commercial licence |
+| D19 | 2026-11-10 | M0 gate: contracts §6–8 now document members the code added beyond the original text (`Registry.load_from`, `Entities.get_next_id/set_next_id/clear`, `HealthComponent.is_dead/revive`, `Inventory.bulky_only/allow_bulky/set_slot/free_space_for`, `Interactable.try_interact`, `World.register_manager`), `SnapPoint`, and the level classes `NodeMarker`/`FishingSpot`/`WildlifeZone` | Needed for save/load, respawn, carry/storage slots and host-validated interaction; the contract must match the code |
+| D20 | 2026-11-10 | `World.get_manager`/`register_manager` parameter is named `manager_name`, not `name` | `name` shadows `Node.name`; call sites pass it positionally so no behaviour change |
+| D21 | 2026-11-10 | Grey-box level volumes: `no_build` areas on layer 8 `ghost`, fishing spots on layer 9 `water`, wildlife zones layer 0 / mask `npc`. Recorded as provisional in contracts §3 | Documents what the generated island does; owners `building`/`world`/`npc` may request changes |
 
 ## Open questions for the human
 

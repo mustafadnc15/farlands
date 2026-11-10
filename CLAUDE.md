@@ -12,3 +12,7 @@ Non-negotiables (details in `docs/01-agent-workflow.md`):
 4. Content is `.tres` data under `res://content/`, not code.
 5. Done means verified with host + one joined client, and reported honestly.
 6. Stay inside v1 scope (`docs/00-vision.md`). New ideas go to `docs/decisions.md`.
+
+## Run the tests
+
+Set `GODOT` to the Godot 4.7 console executable, then run `tools/run_tests.sh` (GUT v9.7.1, headless). Check the summary script/test counts as well as the exit code; details in `docs/qa-testing.md`.
