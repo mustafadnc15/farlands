@@ -1,5 +1,5 @@
 extends SceneTree
-## Writes input actions, 3D physics layer names and the GUT plugin flag into project.godot.
+## Writes input actions, 3D physics layer names, the GUT plugin flag and GDScript warning levels into project.godot.
 ## Idempotent. Run: "$GODOT" --headless --path . -s tools/setup_project.gd
 
 const LAYERS: Array[String] = ["terrain", "player", "npc", "piece", "interact", "node", "drop", "ghost", "water"]
@@ -23,9 +23,11 @@ func _init() -> void:
 	_set_action(&"alt_use", [_mouse(MOUSE_BUTTON_RIGHT)])
 	_set_action(&"hotbar_prev", [_mouse(MOUSE_BUTTON_WHEEL_UP)])
 	_set_action(&"hotbar_next", [_mouse(MOUSE_BUTTON_WHEEL_DOWN)])
-	for i in LAYERS.size():
+	for i: int in LAYERS.size():
 		ProjectSettings.set_setting("layer_names/3d_physics/layer_%d" % (i + 1), LAYERS[i])
 	ProjectSettings.set_setting("editor_plugins/enabled", PackedStringArray(["res://addons/gut/plugin.cfg"]))
+	# 2 = error: untyped declarations fail to parse (addons/ are excluded by default).
+	ProjectSettings.set_setting("debug/gdscript/warnings/untyped_declaration", 2)
 	var err: int = ProjectSettings.save()
 	if err != OK:
 		push_error("setup_project: ProjectSettings.save failed (%d)" % err)

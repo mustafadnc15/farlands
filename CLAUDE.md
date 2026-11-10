@@ -15,4 +15,4 @@ Non-negotiables (details in `docs/01-agent-workflow.md`):
 
 ## Run the tests
 
-Set `GODOT` to the Godot 4.7 console executable, then run `tools/run_tests.sh` (GUT v9.7.1, headless). Check the summary script/test counts as well as the exit code; details in `docs/qa-testing.md`.
+Set `GODOT` to the Godot 4.7 console executable, then run `tools/run_tests.sh` (GUT v9.7.1, headless). Exit code 0 means green: the script fails on test scripts that GUT skipped or could not parse. Details in `docs/qa-testing.md`.

@@ -3,7 +3,7 @@
 ## GDScript
 
 - Follow the official GDScript style guide. Tabs for indentation (matches `.editorconfig`).
-- **Static typing everywhere**: typed vars, params, returns, typed arrays/dictionaries. Treat untyped-declaration warnings as errors.
+- **Static typing everywhere**: typed vars, params, returns, typed arrays/dictionaries. Treat untyped-declaration warnings as errors (enforced by project setting `debug/gdscript/warnings/untyped_declaration = 2`, written by `tools/setup_project.gd`).
 - `class_name` for anything used from another file. One class per file.
 - File order: `class_name`/`extends`, signals, enums, constants, `@export`, public vars, private vars (`_name`), `@onready`, built-in callbacks, public methods, private methods, RPCs last.
 - Use `StringName` literals (`&"log"`) for ids. Never compare ids as plain strings built at runtime.

@@ -27,6 +27,7 @@ Append-only log. Newest at the bottom. Only `lead` edits; anyone may propose thr
 | D19 | 2026-11-10 | M0 gate: contracts §6–8 now document members the code added beyond the original text (`Registry.load_from`, `Entities.get_next_id/set_next_id/clear`, `HealthComponent.is_dead/revive`, `Inventory.bulky_only/allow_bulky/set_slot/free_space_for`, `Interactable.try_interact`, `World.register_manager`), `SnapPoint`, and the level classes `NodeMarker`/`FishingSpot`/`WildlifeZone` | Needed for save/load, respawn, carry/storage slots and host-validated interaction; the contract must match the code |
 | D20 | 2026-11-10 | `World.get_manager`/`register_manager` parameter is named `manager_name`, not `name` | `name` shadows `Node.name`; call sites pass it positionally so no behaviour change |
 | D21 | 2026-11-10 | Grey-box level volumes: `no_build` areas on layer 8 `ghost`, fishing spots on layer 9 `water`, wildlife zones layer 0 / mask `npc`. Recorded as provisional in contracts §3 | Documents what the generated island does; owners `building`/`world`/`npc` may request changes |
+| D22 | 2026-11-10 | `Inventory.set_slot` returns `bool`: host only; rejects (returns false, changes nothing, warns) an out-of-range index or a non-empty slot with an unknown id, a count outside 1..max_stack, or an item the inventory does not accept. `{}` always succeeds | It is the only raw mutator; with `-> void` a move/swap handler could not detect a rejection and would lose or duplicate items, and unchecked input allowed over-sized stacks and bulky items in backpacks |
 
 ## Open questions for the human
 
@@ -49,3 +50,13 @@ Append-only log. Newest at the bottom. Only `lead` edits; anyone may propose thr
 | ElevenLabs MCP | sound effects | available |
 | context7 MCP | up-to-date Godot 4.7 API docs | available (needs sign-in) |
 | Git repository (+ GitHub remote if wanted) | branches/worktrees per agent | not initialised yet; GitHub MCP currently fails to connect |
+
+## Follow-ups for later milestones
+
+From the M0 final review; not done in M0.
+
+| # | Follow-up | Owner / when |
+|---|-----------|--------------|
+| F1 | Add a non-erroring existence check such as `Registry.has_item(id) -> bool` (contract change). `Inventory._item_exists` currently scans `Registry.all_items()` per call because `Registry.item()` pushes an error for unknown ids; fine at v1 content size | `lead`, next contract revision |
+| F2 | `FishingSpot` areas share layer 9 `water` with the water volumes, so any "is in water" query will also hit fishing spots. Flag to `survival` and `world` | M2 |
+| F3 | Host-only guard branches (`Entities.next_id`, `Inventory`, `HealthComponent`, `Interactable`) are untested. Test them without a fake `Net`: set `multiplayer.multiplayer_peer` to an `ENetMultiplayerPeer` after `create_client("127.0.0.1", <port>)` (unique id is not 1), then restore an `OfflineMultiplayerPeer` | M1 |

@@ -32,7 +32,7 @@ func load_from(root: String) -> void:
 		var paths: Array[String] = []
 		_collect_paths("%s/%s" % [root, folder], paths)
 		paths.sort()
-		for path in paths:
+		for path: String in paths:
 			_register(folder, path)
 
 
@@ -141,11 +141,11 @@ func _register(folder: StringName, path: String) -> void:
 func _collect_paths(dir: String, out: Array[String]) -> void:
 	if not DirAccess.dir_exists_absolute(dir):
 		return
-	for file in DirAccess.get_files_at(dir):
-		var name := file.trim_suffix(".remap")
-		if name.ends_with(".tres") or name.ends_with(".res"):
-			var path := "%s/%s" % [dir, name]
+	for file: String in DirAccess.get_files_at(dir):
+		var file_name := file.trim_suffix(".remap")
+		if file_name.ends_with(".tres") or file_name.ends_with(".res"):
+			var path := "%s/%s" % [dir, file_name]
 			if not out.has(path):
 				out.append(path)
-	for sub in DirAccess.get_directories_at(dir):
+	for sub: String in DirAccess.get_directories_at(dir):
 		_collect_paths("%s/%s" % [dir, sub], out)

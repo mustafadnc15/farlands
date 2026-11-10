@@ -7,8 +7,15 @@ signal died(source: StringName)
 
 @export var max_health: float = 100.0
 
-var health: float = 0.0
-var _dead: bool = false
+## Setter clamps to 0..max_health and emits `changed` only on a real change, so a MultiplayerSynchronizer
+## writing it on a client updates listeners. `died` is host-side only (emitted by `damage`).
+var health: float = 0.0:
+	set(value):
+		var v := clampf(value, 0.0, max_health)
+		if v == health:
+			return
+		health = v
+		changed.emit(health, max_health)
 
 
 func _ready() -> void:
@@ -16,27 +23,21 @@ func _ready() -> void:
 
 
 func is_dead() -> bool:
-	return _dead
+	return health <= 0.0
 
 
 func damage(amount: float, source: StringName) -> void:
-	if not _is_host("damage") or amount <= 0.0 or _dead:
+	if not _is_host("damage") or amount <= 0.0 or is_dead():
 		return
-	health = maxf(health - amount, 0.0)
-	changed.emit(health, max_health)
-	if health <= 0.0:
-		_dead = true
+	health -= amount
+	if is_dead():
 		died.emit(source)
 
 
 func heal(amount: float) -> void:
-	if not _is_host("heal") or amount <= 0.0 or _dead:
+	if not _is_host("heal") or amount <= 0.0 or is_dead():
 		return
-	var healed := minf(health + amount, max_health)
-	if healed == health:
-		return
-	health = healed
-	changed.emit(health, max_health)
+	health += amount
 
 
 ## Brings a dead (or living) entity back at `to_health` (clamped to 1..max_health). Used for respawn.
@@ -44,8 +45,6 @@ func revive(to_health: float) -> void:
 	if not _is_host("revive"):
 		return
 	health = clampf(to_health, 1.0, max_health)
-	_dead = false
-	changed.emit(health, max_health)
 
 
 func _is_host(action: String) -> bool:

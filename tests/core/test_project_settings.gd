@@ -7,10 +7,10 @@ const ACTIONS: Array[StringName] = [&"move_forward", &"move_back", &"move_left",
 const LAYERS: Array[String] = ["terrain", "player", "npc", "piece", "interact", "node", "drop", "ghost", "water"]
 
 func test_all_input_actions_exist() -> void:
-	for a in ACTIONS:
+	for a: StringName in ACTIONS:
 		assert_true(InputMap.has_action(a), "missing action %s" % a)
 		assert_gt(InputMap.action_get_events(a).size(), 0, "no binding for %s" % a)
 
 func test_physics_layer_names() -> void:
-	for i in LAYERS.size():
+	for i: int in LAYERS.size():
 		assert_eq(ProjectSettings.get_setting("layer_names/3d_physics/layer_%d" % (i + 1)), LAYERS[i])

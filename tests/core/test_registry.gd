@@ -26,7 +26,7 @@ func test_duplicate_keeps_first_and_reports() -> void:
 	assert_ne(Registry.item(&"log").display_name, "Dup")
 
 func test_wrong_type_and_empty_id_skipped() -> void:
-	for d in Registry.all_items():
+	for d: ItemDef in Registry.all_items():
 		assert_true(d is ItemDef)
 		assert_ne(d.id, &"")
 

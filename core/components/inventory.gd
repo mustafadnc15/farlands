@@ -41,7 +41,7 @@ func remove(item_id: StringName, count: int) -> bool:
 	if not _is_host("remove") or count <= 0 or count_of(item_id) < count:
 		return false
 	var left := count
-	for i in range(_slots.size() - 1, -1, -1):
+	for i: int in range(_slots.size() - 1, -1, -1):
 		if left == 0:
 			break
 		if _slots[i].get("id") != item_id:
@@ -78,15 +78,31 @@ func get_slot(i: int) -> Dictionary:
 	return _slots[i].duplicate()
 
 
-## Host only. Overwrites slot `i` (`{}` empties it); used by moves/swaps and sync.
-func set_slot(i: int, slot: Dictionary) -> void:
-	if not _is_host("set_slot") or i < 0 or i >= _slots.size():
-		return
-	var normalized := _normalize(slot, false)
-	if normalized == _slots[i]:
-		return
-	_slots[i] = normalized
-	changed.emit()
+## Host only. Overwrites slot `i` (`{}` empties it); used by moves/swaps. Returns false and changes
+## nothing if not host, `i` is out of range, or the slot is invalid for this inventory (unknown id,
+## count outside 1..max_stack, or an item this inventory does not accept).
+func set_slot(i: int, slot: Dictionary) -> bool:
+	if not _is_host("set_slot"):
+		return false
+	if i < 0 or i >= _slots.size():
+		push_warning("[inventory] set_slot rejected: index %d out of range" % i)
+		return false
+	var normalized: Dictionary = {}
+	if not slot.is_empty():
+		var item_id := StringName(str(slot.get("id", "")))
+		var count := int(slot.get("count", 0))
+		if not _item_exists(item_id):
+			push_warning("[inventory] set_slot rejected: unknown item id '%s'" % item_id)
+			return false
+		var def: ItemDef = Registry.item(item_id)
+		if count < 1 or count > _stack(def) or not _accepts(def):
+			push_warning("[inventory] set_slot rejected: %d x '%s' not valid in slot %d" % [count, item_id, i])
+			return false
+		normalized = _normalize(slot, false)
+	if normalized != _slots[i]:
+		_slots[i] = normalized
+		changed.emit()
+	return true
 
 
 ## How many more of `item_id` fit right now (0 for unknown or rejected items).
@@ -97,9 +113,9 @@ func free_space_for(item_id: StringName) -> int:
 	var space := 0
 	for slot: Dictionary in _slots:
 		if slot.is_empty():
-			space += def.max_stack
+			space += _stack(def)
 		elif slot["id"] == item_id:
-			space += def.max_stack - int(slot["count"])
+			space += _stack(def) - int(slot["count"])
 	return maxi(space, 0)
 
 
@@ -120,7 +136,7 @@ func from_dict(d: Dictionary) -> void:
 	var src: Array = raw if raw is Array else []
 	var before: Array[Dictionary] = _slots.duplicate(true)
 	var unknown: Array[String] = []
-	for i in _slots.size():
+	for i: int in _slots.size():
 		var entry: Variant = src[i] if i < src.size() else {}
 		_slots[i] = _restore_slot(entry, unknown)
 	if not unknown.is_empty():
@@ -149,7 +165,7 @@ func _normalize(slot: Dictionary, clamp_to_stack: bool) -> Dictionary:
 		return {}
 	var def: ItemDef = Registry.item(item_id)
 	if clamp_to_stack:
-		count = mini(count, def.max_stack)
+		count = mini(count, _stack(def))
 	return {"id": item_id, "count": count, "durability": _starting_durability(def, int(slot.get("durability", -1)))}
 
 
@@ -167,8 +183,13 @@ func _accepts(def: ItemDef) -> bool:
 	return allow_bulky or not def.bulky
 
 
+# A def with max_stack <= 0 (content typo) is treated as non-stacking instead of corrupting slots.
+func _stack(def: ItemDef) -> int:
+	return maxi(def.max_stack, 1)
+
+
 func _starting_durability(def: ItemDef, durability: int) -> int:
-	if def.max_stack != 1 or def.tool == null:
+	if _stack(def) != 1 or def.tool == null:
 		return -1
 	return durability if durability >= 0 else def.tool.max_durability
 
@@ -180,7 +201,7 @@ func _fill_existing(def: ItemDef, count: int) -> int:
 			break
 		if slot.is_empty() or slot["id"] != def.id:
 			continue
-		var moved := mini(left, def.max_stack - int(slot["count"]))
+		var moved := mini(left, _stack(def) - int(slot["count"]))
 		if moved > 0:
 			slot["count"] = int(slot["count"]) + moved
 			left -= moved
@@ -189,12 +210,12 @@ func _fill_existing(def: ItemDef, count: int) -> int:
 
 func _fill_empty(def: ItemDef, count: int, durability: int) -> int:
 	var left := count
-	for i in _slots.size():
+	for i: int in _slots.size():
 		if left == 0:
 			break
 		if not _slots[i].is_empty():
 			continue
-		var moved := mini(left, def.max_stack)
+		var moved := mini(left, _stack(def))
 		_slots[i] = {"id": def.id, "count": moved, "durability": durability}
 		left -= moved
 	return left
@@ -203,7 +224,7 @@ func _fill_empty(def: ItemDef, count: int, durability: int) -> int:
 func _resize() -> void:
 	var old := _slots.size()
 	_slots.resize(slot_count)
-	for i in range(old, slot_count):
+	for i: int in range(old, slot_count):
 		_slots[i] = {}
 
 

@@ -28,10 +28,10 @@ Signatures here are normative. If the code differs, that is a bug in one of them
 | 8 | `ghost` | blueprints (placement queries only, no body collision) |
 | 9 | `water` | water volumes |
 
-> **Provisional — owners `building`/`world`/`npc` may request a change.** As built in the grey-box island (`tools/build_greybox_island.gd`), level volumes sit on these layers (none of them monitor; `collision_mask` is 0 unless stated):
-> - `no_build` areas (group `no_build`): layer 8 `ghost`, `monitoring = false`. Placement code queries them with a ghost-layer area/shape query.
-> - `FishingSpot` areas: layer 9 `water`.
-> - `WildlifeZone` areas: collision layer 0, collision mask 3 (`npc`), so they can detect animal bodies.
+> **Provisional — owners `building`/`world`/`npc` may request a change.** As built in the grey-box island (`tools/build_greybox_island.gd`), level volumes are set up as follows (layer numbers are 1-based layer indices, not bitmask values):
+> - `no_build` areas (group `no_build`): collision layer 8 `ghost`, mask 0, `monitoring = false`. Placement code queries them with a ghost-layer area/shape query.
+> - `FishingSpot` areas: collision layer 9 `water`, mask 0, monitoring on (it detects nothing because the mask is 0).
+> - `WildlifeZone` areas: collision layer 0, mask = layer 3 `npc` (bit value 4), monitoring on, so they detect animal bodies.
 
 ## 4. Input actions
 
@@ -45,7 +45,7 @@ Signatures here are normative. If the code differs, that is a bug in one of them
 
 ## 6. Def resources (`res://core/defs/`)
 
-All extend `Resource` with `@export var id: StringName` and `display_name: String`.
+All extend `Resource`. All defs except `SnapPoint` and `ToolStats` have `@export var id: StringName` and `display_name: String`.
 
 ```gdscript
 class_name ItemDef      # id, display_name, icon: Texture2D, world_scene: PackedScene,
@@ -106,7 +106,8 @@ func register_manager(manager_name: StringName, node: Node) -> void   # called b
 
 ```gdscript
 class_name HealthComponent extends Node
-  @export var max_health: float = 100.0; var health: float   # health = max_health on _ready
+  @export var max_health: float = 100.0
+  var health: float  # setter clamps to 0..max_health and emits changed (safe for MultiplayerSynchronizer); is_dead() == health <= 0; health = max_health on _ready
   func is_dead() -> bool
   func damage(amount: float, source: StringName) -> void    # host only
   func heal(amount: float) -> void                          # host only
@@ -123,9 +124,10 @@ class_name Inventory extends Node
   func count_of(item_id: StringName) -> int
   func has_all(cost: Dictionary) -> bool
   func get_slot(i: int) -> Dictionary        # {} or {id, count, durability}; a copy
-  func set_slot(i: int, slot: Dictionary) -> void      # host only; overwrites slot i ({} empties); for moves/swaps/sync
+  func set_slot(i: int, slot: Dictionary) -> bool  # host only; overwrites slot i ({} empties); returns false and changes nothing if the slot is invalid for this inventory
   func free_space_for(item_id: StringName) -> int      # how many more fit now (0 if unknown or rejected)
   func to_dict() -> Dictionary ; func from_dict(d: Dictionary) -> void
+  # not host-only: clients apply host snapshots with from_dict(to_dict()); replicate by RPC, not synchronizer
   signal changed()
 
 class_name Interactable extends Area3D       # layer 5, group "interactable"

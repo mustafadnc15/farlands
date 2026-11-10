@@ -51,3 +51,12 @@ func test_revive_restores() -> void:
 	assert_false(hp.is_dead())
 	hp.damage(100.0, &"y")
 	assert_signal_emit_count(hp, "died", 2)
+
+func test_health_set_directly_emits_changed() -> void:
+	# The MultiplayerSynchronizer path: a client receives health by plain assignment.
+	hp.health = 40.0
+	assert_signal_emitted_with_parameters(hp, "changed", [40.0, 100.0])
+	assert_false(hp.is_dead())
+	hp.health = 0.0
+	assert_true(hp.is_dead())
+	assert_signal_emit_count(hp, "changed", 2)

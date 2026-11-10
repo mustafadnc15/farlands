@@ -23,6 +23,8 @@ func start_game() -> void:
 
 func end_game() -> void:
 	if _game != null:
-		_game.free()
+		remove_child(_game)
+		_game.queue_free()
 		_game = null
+	Entities.clear()
 	_menu.show()

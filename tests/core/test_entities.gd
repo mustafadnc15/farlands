@@ -5,6 +5,10 @@ func before_each() -> void:
 	Entities.clear()
 
 
+func after_all() -> void:
+	Entities.clear()
+
+
 func test_ids_start_at_one_and_increase() -> void:
 	assert_eq(Entities.next_id(), 1)
 	assert_eq(Entities.next_id(), 2)
