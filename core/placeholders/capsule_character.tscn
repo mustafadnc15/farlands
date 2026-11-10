@@ -1,0 +1,127 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://core/placeholders/placeholder_palette.tres" id="1_wgkj6"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_rtx7c"]
+material = ExtResource("1_wgkj6")
+radius = 0.35
+height = 1.7
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2p4kw"]
+material = ExtResource("1_wgkj6")
+top_radius = 0.0
+bottom_radius = 0.08
+height = 0.2
+
+[sub_resource type="Animation" id="Animation_cfekc"]
+
+[sub_resource type="Animation" id="Animation_04wha"]
+
+[sub_resource type="Animation" id="Animation_q7yqn"]
+
+[sub_resource type="Animation" id="Animation_45fnh"]
+
+[sub_resource type="Animation" id="Animation_8a7nt"]
+
+[sub_resource type="Animation" id="Animation_3ff0b"]
+
+[sub_resource type="Animation" id="Animation_xik6j"]
+
+[sub_resource type="Animation" id="Animation_lf8p4"]
+
+[sub_resource type="Animation" id="Animation_vfqoq"]
+
+[sub_resource type="Animation" id="Animation_1my63"]
+
+[sub_resource type="Animation" id="Animation_ckkt5"]
+
+[sub_resource type="Animation" id="Animation_qrvh4"]
+
+[sub_resource type="Animation" id="Animation_1q6w8"]
+
+[sub_resource type="Animation" id="Animation_6q8k3"]
+
+[sub_resource type="Animation" id="Animation_ptuj3"]
+
+[sub_resource type="Animation" id="Animation_p40lq"]
+
+[sub_resource type="Animation" id="Animation_4344t"]
+
+[sub_resource type="Animation" id="Animation_owy1l"]
+
+[sub_resource type="Animation" id="Animation_02rqb"]
+
+[sub_resource type="Animation" id="Animation_p1rql"]
+
+[sub_resource type="Animation" id="Animation_pv7qv"]
+
+[sub_resource type="Animation" id="Animation_sqofp"]
+
+[sub_resource type="Animation" id="Animation_jrpxe"]
+
+[sub_resource type="Animation" id="Animation_jsg8g"]
+
+[sub_resource type="Animation" id="Animation_dtknl"]
+
+[sub_resource type="Animation" id="Animation_lr2hs"]
+
+[sub_resource type="Animation" id="Animation_j8nbu"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t2ddt"]
+_data = {
+&"carry_idle": SubResource("Animation_cfekc"),
+&"carry_walk": SubResource("Animation_04wha"),
+&"die": SubResource("Animation_q7yqn"),
+&"eat": SubResource("Animation_45fnh"),
+&"fall": SubResource("Animation_8a7nt"),
+&"hurt": SubResource("Animation_3ff0b"),
+&"idle": SubResource("Animation_xik6j"),
+&"jump": SubResource("Animation_lf8p4"),
+&"land": SubResource("Animation_vfqoq"),
+&"pickup": SubResource("Animation_1my63"),
+&"rod_cast": SubResource("Animation_ckkt5"),
+&"rod_idle": SubResource("Animation_qrvh4"),
+&"rod_reel": SubResource("Animation_1q6w8"),
+&"run": SubResource("Animation_6q8k3"),
+&"sit": SubResource("Animation_ptuj3"),
+&"sleep": SubResource("Animation_p40lq"),
+&"spear_aim": SubResource("Animation_4344t"),
+&"spear_throw": SubResource("Animation_owy1l"),
+&"spear_thrust": SubResource("Animation_02rqb"),
+&"swing_axe": SubResource("Animation_p1rql"),
+&"swing_hammer": SubResource("Animation_pv7qv"),
+&"swing_hoe": SubResource("Animation_sqofp"),
+&"swing_pick": SubResource("Animation_jrpxe"),
+&"talk": SubResource("Animation_jsg8g"),
+&"walk": SubResource("Animation_dtknl"),
+&"water": SubResource("Animation_lr2hs"),
+&"wave": SubResource("Animation_j8nbu")
+}
+
+[node name="Model" type="Node3D" unique_id=197114105]
+
+[node name="Body" type="MeshInstance3D" parent="." unique_id=938508818]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("CapsuleMesh_rtx7c")
+
+[node name="Nose" type="MeshInstance3D" parent="." unique_id=1306940568]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 1.5, -0.4)
+mesh = SubResource("CylinderMesh_2p4kw")
+
+[node name="hand_r" type="Node3D" parent="." unique_id=1527355213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.9, 0)
+
+[node name="hand_l" type="Node3D" parent="." unique_id=52182922]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.9, 0)
+
+[node name="shoulder_r" type="Node3D" parent="." unique_id=742357211]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.4, 0)
+
+[node name="back" type="Node3D" parent="." unique_id=293288104]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0.35)
+
+[node name="head_top" type="Node3D" parent="." unique_id=1173237405]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1527072420]
+libraries/ = SubResource("AnimationLibrary_t2ddt")
