@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://core/defs/item_def.gd" id="1_item"]
+[ext_resource type="Script" path="res://core/defs/tool_stats.gd" id="2_tool"]
+
+[sub_resource type="Resource" id="Resource_tool"]
+script = ExtResource("2_tool")
+tool_type = &"axe"
+max_durability = 60
+
+[resource]
+script = ExtResource("1_item")
+id = &"stone_axe"
+display_name = "Stone Axe"
+max_stack = 1
+tool = SubResource("Resource_tool")
