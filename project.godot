@@ -16,7 +16,10 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+Events="*res://core/autoload/events.gd"
 Registry="*res://core/autoload/registry.gd"
+Entities="*res://core/autoload/entities.gd"
+Net="*res://net/net.gd"
 
 [display]
 
