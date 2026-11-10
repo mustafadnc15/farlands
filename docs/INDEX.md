@@ -81,7 +81,7 @@ Updated by `lead` when a milestone gate passes. See [roadmap.md](roadmap.md).
 
 | Milestone | State |
 |-----------|-------|
-| M0 Foundation | done (a9d54d7) |
+| M0 Foundation | done (a8bd0da) |
 | M1 Walk together | not started |
 | M2 Survive & gather | not started |
 | M3 Build | not started |
